@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:overwatched/models/serie.dart';
 
 class SeriesDetailPage extends StatefulWidget {
-  const SeriesDetailPage({Key? key, required this.name}) : super(key: key);
+  const SeriesDetailPage({Key? key, required this.serie}) : super(key: key);
 
-  final String name;
+  final Serie serie;
 
   @override
   State<SeriesDetailPage> createState() => _SeriesDetailPageState();
@@ -14,10 +15,10 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.name),
+          title: Text(widget.serie.name),
         ),
         body: Center(
-          child: Text(widget.name),
+          child: Text(widget.serie.name),
         )
     );
   }

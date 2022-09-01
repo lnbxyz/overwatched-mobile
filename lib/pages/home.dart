@@ -38,13 +38,13 @@ class _HomePageState extends State<HomePage> {
                 child: Text(_data[index]),
               ),
             ),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => SeriesDetailPage(name: _data[index]),
-                ),
-              );
-            },
+            // onTap: () {
+            //   Navigator.of(context).push(
+            //     MaterialPageRoute(
+            //       builder: (context) => SeriesDetailPage(name: _data[index]),
+            //     ),
+            //   );
+            // },
           );
         }
       )

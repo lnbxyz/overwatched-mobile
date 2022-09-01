@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:overwatched/pages/series_detail.dart';
 
+import 'models/serie.dart';
 import 'pages/home.dart';
 
 void main() {
@@ -16,7 +18,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage(),
+      home: SeriesDetailPage(serie: Serie(
+
+      )),
     );
   }
 }
