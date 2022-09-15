@@ -106,19 +106,25 @@ class SerieCard extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: Column(
-                    children: [
-                      Text(
-                        serie.name,
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                      Text(
-                        serie.description,
-                        style: Theme.of(context).textTheme.bodyText2,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      )
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 12),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          serie.name,
+                          style: Theme.of(context).textTheme.headline6,
+                          textAlign: TextAlign.left,
+                        ),
+                        Text(
+                          serie.description,
+                          style: Theme.of(context).textTheme.bodyText2,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ],
