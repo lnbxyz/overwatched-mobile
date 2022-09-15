@@ -16,15 +16,27 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _data = [
         Serie(
-          id: "1",
-          name: 'Russian Doll',
-          coverUrl: "https://www.tvguide.com/a/img/catalog/provider/1/1/1-7650473727.jpg",
-          description: "Russian Doll is a 30 minute comedy-fantasy-mystery-science fiction starring Natasha Lyonne as Nadia Vulvokov, Charlie Barnett as Alan Zaveri and Greta Lee as Maxine.",
-          releaseYear: "2019",
-          endingYear: "Present",
-          genres: ["Fantasy", "Comedy"],
-          score: 7.8
-        )
+            id: "1",
+            name: 'Russian Doll',
+            coverUrl:
+                "https://www.tvguide.com/a/img/catalog/provider/1/1/1-7650473727.jpg",
+            description:
+                "Russian Doll is a 30 minute comedy-fantasy-mystery-science fiction starring Natasha Lyonne as Nadia Vulvokov, Charlie Barnett as Alan Zaveri and Greta Lee as Maxine.",
+            releaseYear: "2019",
+            endingYear: "Present",
+            genres: ["Fantasy", "Comedy"],
+            score: 7.8),
+        Serie(
+            id: "2",
+            name: 'Stranger Things',
+            coverUrl:
+                "https://br.web.img2.acsta.net/pictures/19/07/10/20/01/2331295.jpg",
+            description:
+                "When a young boy disappears, his mother, a police chief and his friends must confront terrifying supernatural forces in order to get him back.",
+            releaseYear: "2016",
+            endingYear: "Present",
+            genres: ["Drama", "Fantasy", "Horror"],
+            score: 8.7),
       ];
     });
   }
@@ -43,9 +55,8 @@ class _HomePageState extends State<HomePage> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: SerieCard(_data[index])
-                    ),
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: SerieCard(_data[index])),
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
@@ -55,9 +66,7 @@ class _HomePageState extends State<HomePage> {
                       );
                     },
                   );
-                })
-        )
-    );
+                })));
   }
 }
 
@@ -72,9 +81,51 @@ class SerieCard extends StatelessWidget {
       key: ValueKey(serie.id),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text(serie.name),
+        child: SizedBox(
+          width: double.infinity,
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Flexible(
+                  flex: 0,
+                  child: SizedBox(
+                    height: 120,
+                    child: AspectRatio(
+                      aspectRatio: 9 / 16,
+                      child: ClipRRect(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(4.0)),
+                        child: Image.network(
+                          serie.coverUrl,
+                          height: 120,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Text(
+                        serie.name,
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                      Text(
+                        serie.description,
+                        style: Theme.of(context).textTheme.bodyText2,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
-
 }
