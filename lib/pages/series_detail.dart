@@ -5,6 +5,8 @@ import 'package:overwatched/components/season_list.dart';
 import 'package:overwatched/components/series_info_ROW.dart';
 import 'package:overwatched/models/serie.dart';
 
+import '../models/serie.dart';
+
 class SeriesDetailPage extends StatefulWidget {
   const SeriesDetailPage({Key? key, required this.serie}) : super(key: key);
 
