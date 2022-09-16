@@ -122,7 +122,9 @@ class SerieCard extends StatelessWidget {
                           style: Theme.of(context).textTheme.bodyText2,
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
-                        )
+                        ),
+                        Text(serie.genres.join(',')),
+                        Text(serie.score.toStringAsFixed(1))
                       ],
                     ),
                   ),
