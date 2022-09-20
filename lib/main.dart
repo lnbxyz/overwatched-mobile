@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:overwatched/pages/series_detail.dart';
+import 'package:overwatched/pages/login.dart';
 
-import 'models/serie.dart';
-import 'pages/home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage()
+      home: const LoginPage()
     );
   }
 }
