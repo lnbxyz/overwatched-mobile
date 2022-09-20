@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:overwatched/components/episode_list.dart';
 import 'package:overwatched/models/season.dart';
 
 Future<List<Season>> fetchSeasons() async {
@@ -70,7 +71,8 @@ class _SeasonListState extends State<SeasonList> {
                       },
                     )
                   ],
-                )
+                ),
+                EpisodeList(seasonId: snapshot.data![index].id)
               ],
             )
           );
