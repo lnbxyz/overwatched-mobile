@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:overwatched/models/serie.dart';
 import 'package:overwatched/pages/series_detail.dart';
 
+import '../components/series_info_ROW.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -123,8 +125,14 @@ class SerieCard extends StatelessWidget {
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        Text(serie.genres.join(',')),
-                        Text(serie.score.toStringAsFixed(1))
+                        SeriesInfoRow(
+                            icon: Icons.theater_comedy_outlined,
+                            text: serie.genres.join(', ')
+                        ),
+                        SeriesInfoRow(
+                            icon: Icons.grade_outlined,
+                            text: '${serie.score.toStringAsFixed(1)}/10.0'
+                        ),
                       ],
                     ),
                   ),
