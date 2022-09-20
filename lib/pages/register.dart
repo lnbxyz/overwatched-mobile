@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:overwatched/pages/register.dart';
+import 'package:overwatched/pages/login.dart';
 
 import 'home.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatelessWidget {
+  const RegisterPage({super.key});
 
-  void _onClickLogin(BuildContext context) {
+  void _onClickCreate(BuildContext context) {
     _login(context);
   }
 
@@ -18,12 +18,8 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  void _onClickRegister(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const RegisterPage(),
-      ),
-    );
+  void _onClickHasAccount(BuildContext context) {
+    Navigator.of(context).pop();
   }
 
   @override
@@ -39,7 +35,7 @@ class LoginPage extends StatelessWidget {
               children: [
                 Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Text("Login",
+                    child: Text("Criar conta",
                         style: Theme.of(context).textTheme.headline3)),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12),
@@ -66,11 +62,11 @@ class LoginPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         TextButton(
-                            onPressed: () => _onClickRegister(context),
-                            child: const Text("Criar conta")),
+                            onPressed: () => _onClickHasAccount(context),
+                            child: const Text("Jã possui conta?")),
                         OutlinedButton(
-                            onPressed: () => _onClickLogin(context),
-                            child: const Text('Entrar')),
+                            onPressed: () => _onClickCreate(context),
+                            child: const Text('Criar')),
                       ],
                     ))
               ],
