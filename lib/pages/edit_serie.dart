@@ -13,7 +13,13 @@ class EditSeriePage extends StatefulWidget {
 class _EditSeriePageState extends State<EditSeriePage> {
   final TextEditingController _textEditingGenresController =
       TextEditingController();
-  List<String> _genreValues = [];
+  late List<String> _genreValues;
+
+  @override
+  void initState() {
+    _genreValues = widget.serie?.genres ?? [];
+    super.initState();
+  }
 
   void _onClickSave(BuildContext context) {
     // TODO modal de sucesso
