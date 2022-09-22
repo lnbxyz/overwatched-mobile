@@ -30,11 +30,6 @@ class _EditSeriePageState extends State<EditSeriePage> {
     _genreValues.add(_textEditingGenresController.text);
     _textEditingGenresController.clear();
 
-    // needs to refocus the field to make clear work
-    FocusNode? focusNode = FocusScope.of(context).focusedChild;
-    FocusScope.of(context).unfocus();
-    Future.delayed(const Duration(microseconds: 1)).then((_) => FocusScope.of(context).requestFocus(focusNode));
-
     setState(() {
       _genreValues = _genreValues;
     });
@@ -124,10 +119,14 @@ class _EditSeriePageState extends State<EditSeriePage> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: TextFormField(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Gêneros cinematográficos',
-                  ),
+                  decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: 'Gêneros cinematográficos',
+                      suffixIcon: IconButton(
+                        visualDensity: VisualDensity.compact,
+                        onPressed: _addChip,
+                        icon: const Icon(Icons.add),
+                      )),
                   controller: _textEditingGenresController,
                   onEditingComplete: _addChip,
                 ),
