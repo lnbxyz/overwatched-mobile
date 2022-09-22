@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:overwatched/models/serie.dart';
+import 'package:overwatched/pages/edit_serie.dart';
 import 'package:overwatched/pages/series_detail.dart';
 
 import '../components/series_info_ROW.dart';
@@ -43,6 +44,14 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _onClickAdd(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const EditSeriePage(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     _fetchData();
@@ -72,9 +81,7 @@ class _HomePageState extends State<HomePage> {
             )
         ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Add your onPressed code here!
-        },
+        onPressed: () => _onClickAdd(context),
         child: const Icon(Icons.add),
       )
     );
