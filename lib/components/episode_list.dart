@@ -24,7 +24,7 @@ class EpisodeList extends StatefulWidget {
 }
 
 // This is the type used by the popup menu below.
-enum Action { edit, delete, markAsWatched }
+enum Action { edit, delete }
 
 class _EpisodeListState extends State<EpisodeList> {
 
@@ -78,6 +78,12 @@ class _EpisodeListState extends State<EpisodeList> {
                     ),
                   ),
                 Flexible(child: Container()),
+                IconButton(
+                  icon: const Icon(Icons.visibility_outlined),
+                  onPressed: () {
+                    // Respond to button press
+                  },
+                ),
                 PopupMenuButton<Action>(
                   // Callback that sets the selected popup menu item.
                     onSelected: (Action action) {
@@ -91,11 +97,7 @@ class _EpisodeListState extends State<EpisodeList> {
                       const PopupMenuItem<Action>(
                         value: Action.delete,
                         child: Text('Delete'),
-                      ),
-                      const PopupMenuItem<Action>(
-                        value: Action.markAsWatched,
-                        child: Text('Mark as watched'),
-                      ),
+                      )
                     ]),
               ],
             ),
