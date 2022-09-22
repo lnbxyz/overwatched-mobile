@@ -30,7 +30,7 @@ class _EditSeriePageState extends State<EditSeriePage> {
       showDialog(
         context: context,
         builder: (BuildContext context) =>
-            const SimpleAlert(title: 'Série salvada com sucesso'),
+            const SimpleAlert(title: 'Série salva com sucesso'),
       ).whenComplete(() => Navigator.of(context).pop());
     });
   }
