@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:overwatched/models/serie.dart';
+
+import '../components/simple_alert.dart';
 
 class EditSeriePage extends StatefulWidget {
   const EditSeriePage({Key? key, this.serie}) : super(key: key);
@@ -22,8 +26,13 @@ class _EditSeriePageState extends State<EditSeriePage> {
   }
 
   void _onClickSave(BuildContext context) {
-    // TODO modal de sucesso
-    Navigator.of(context).pop();
+    Timer.run(() {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) =>
+            const SimpleAlert(title: 'Série salvada com sucesso'),
+      ).whenComplete(() => Navigator.of(context).pop());
+    });
   }
 
   void _addChip() {
@@ -33,7 +42,8 @@ class _EditSeriePageState extends State<EditSeriePage> {
     // needs to refocus the field to make clear work
     FocusNode? focusNode = FocusScope.of(context).focusedChild;
     FocusScope.of(context).unfocus();
-    Future.delayed(const Duration(microseconds: 1)).then((_) => FocusScope.of(context).requestFocus(focusNode));
+    Future.delayed(const Duration(microseconds: 1))
+        .then((_) => FocusScope.of(context).requestFocus(focusNode));
 
     setState(() {
       _genreValues = _genreValues;
