@@ -37,7 +37,9 @@ class _EditSeriePageState extends State<EditSeriePage> {
 
   void _addChip() {
     _genreValues.add(_textEditingGenresController.text);
-    _textEditingGenresController.clear();
+    Timer.run(() {
+      _textEditingGenresController.clear();
+    });
 
     setState(() {
       _genreValues = _genreValues;
