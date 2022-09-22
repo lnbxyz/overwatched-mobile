@@ -6,6 +6,7 @@ import 'package:overwatched/components/series_info_ROW.dart';
 import 'package:overwatched/models/serie.dart';
 
 import '../models/serie.dart';
+import 'edit_serie.dart';
 
 class SeriesDetailPage extends StatefulWidget {
   const SeriesDetailPage({Key? key, required this.serie}) : super(key: key);
@@ -17,6 +18,15 @@ class SeriesDetailPage extends StatefulWidget {
 }
 
 class _SeriesDetailPageState extends State<SeriesDetailPage> {
+
+  _onClickEdit(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => EditSeriePage(serie: widget.serie),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,7 +96,11 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
             )
           ],
         ),
-      )
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _onClickEdit(context),
+        child: const Icon(Icons.edit),
+      ),
     );
   }
 }

@@ -40,6 +40,7 @@ class _EditSeriePageState extends State<EditSeriePage> {
                     border: OutlineInputBorder(),
                     labelText: 'Nome',
                   ),
+                  initialValue: widget.serie?.name,
                 ),
               ),
               Padding(
@@ -52,6 +53,7 @@ class _EditSeriePageState extends State<EditSeriePage> {
                   minLines: 3,
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
+                  initialValue: widget.serie?.description,
                 ),
               ),
               Padding(
@@ -62,6 +64,7 @@ class _EditSeriePageState extends State<EditSeriePage> {
                     labelText: 'URL da imagem de capa',
                   ),
                   keyboardType: TextInputType.url,
+                  initialValue: widget.serie?.coverUrl,
                 ),
               ),
               Padding(
@@ -72,6 +75,7 @@ class _EditSeriePageState extends State<EditSeriePage> {
                     labelText: 'Ano de lançamento',
                   ),
                   keyboardType: TextInputType.number,
+                  initialValue: widget.serie?.releaseYear,
                 ),
               ),
               Padding(
@@ -82,6 +86,7 @@ class _EditSeriePageState extends State<EditSeriePage> {
                     labelText: 'Ano de encerramento',
                   ),
                   keyboardType: TextInputType.number,
+                  initialValue: widget.serie?.endingYear,
                 ),
               ),
               Padding(
@@ -101,6 +106,7 @@ class _EditSeriePageState extends State<EditSeriePage> {
                       labelText: 'Nota IMDb',
                       suffixText: '/ 10.0'),
                   keyboardType: TextInputType.number,
+                  initialValue: widget.serie?.score.toStringAsFixed(1),
                 ),
               ),
               Padding(
