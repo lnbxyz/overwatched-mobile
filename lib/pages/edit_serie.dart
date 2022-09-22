@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:overwatched/models/serie.dart';
+
+import '../components/simple_alert.dart';
 
 class EditSeriePage extends StatefulWidget {
   const EditSeriePage({Key? key, this.serie}) : super(key: key);
@@ -22,8 +26,13 @@ class _EditSeriePageState extends State<EditSeriePage> {
   }
 
   void _onClickSave(BuildContext context) {
-    // TODO modal de sucesso
-    Navigator.of(context).pop();
+    Timer.run(() {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) =>
+            const SimpleAlert(title: 'Série salva com sucesso'),
+      ).whenComplete(() => Navigator.of(context).pop());
+    });
   }
 
   void _addChip() {
