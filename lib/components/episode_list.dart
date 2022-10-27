@@ -10,6 +10,13 @@ Future<List<Episode>> fetchEpisodes() async {
       id: '2000',
       number: 1,
       duration: 23
+    ),
+    Episode(
+      name: 'Episode 2',
+      id: '2001',
+      number: 2,
+      duration: 27,
+      watched: true
     )
   ]);
 }
@@ -83,6 +90,7 @@ class _EpisodeListState extends State<EpisodeList> {
                   onPressed: () {
                     // Respond to button press
                   },
+                  color: snapshot.data![index].watched ? Colors.orange : Colors.grey,
                 ),
                 PopupMenuButton<Action>(
                   // Callback that sets the selected popup menu item.
