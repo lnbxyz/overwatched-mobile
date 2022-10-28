@@ -1,4 +1,11 @@
-class Serie {
+import 'package:mobx/mobx.dart';
+
+//flutter pub run build_runner build
+part 'serie.g.dart';
+
+class Serie = _Serie with _$Serie;
+
+abstract class _Serie with Store {
   String id;
   String name;
   String coverUrl;
@@ -8,7 +15,7 @@ class Serie {
   List<String> genres;
   double score;
 
-  Serie({
+  _Serie({
     this.id = '',
     this.name = '',
     this.coverUrl = '',
