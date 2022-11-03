@@ -9,6 +9,10 @@ class SerieRepository {
     return [];
   }
 
+  Future<Serie?> getOne() async {
+    return null;
+}
+
   Future<Serie?> update(Serie serie) async {
     return null;
   }
