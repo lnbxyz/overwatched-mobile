@@ -1,10 +1,17 @@
-class Season {
+import 'package:mobx/mobx.dart';
+
+//flutter pub run build_runner build
+part 'season.g.dart';
+
+class Season = _Season with _$Season;
+
+abstract class _Season with Store {
   String id;
   String series;
   String name;
   int number;
 
-  Season({
+  _Season({
     this.id = '',
     this.name = '',
     this.number = 0,
