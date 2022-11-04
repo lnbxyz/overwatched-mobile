@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:overwatched/models/serie.dart';
 import 'package:overwatched/pages/edit_serie.dart';
 import 'package:overwatched/pages/series_detail.dart';
+import 'package:overwatched/stores/serie_store.dart';
 
 import '../components/series_info_ROW.dart';
 
@@ -13,36 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Serie> _data = [];
-
-  void _fetchData() {
-    setState(() {
-      _data = [
-        Serie(
-            id: "1",
-            name: 'Russian Doll',
-            coverUrl:
-                "https://www.tvguide.com/a/img/catalog/provider/1/1/1-7650473727.jpg",
-            description:
-                "Russian Doll is a 30 minute comedy-fantasy-mystery-science fiction starring Natasha Lyonne as Nadia Vulvokov, Charlie Barnett as Alan Zaveri and Greta Lee as Maxine.",
-            releaseYear: "2019",
-            endingYear: "Present",
-            genres: ["Fantasy", "Comedy"],
-            score: 7.8),
-        Serie(
-            id: "2",
-            name: 'Stranger Things',
-            coverUrl:
-                "https://br.web.img2.acsta.net/pictures/19/07/10/20/01/2331295.jpg",
-            description:
-                "When a young boy disappears, his mother, a police chief and his friends must confront terrifying supernatural forces in order to get him back.",
-            releaseYear: "2016",
-            endingYear: "Present",
-            genres: ["Drama", "Fantasy", "Horror"],
-            score: 8.7),
-      ];
-    });
-  }
+  SerieStore serieStore = SerieStore();
 
   void _onClickAdd(BuildContext context) {
     Navigator.of(context).push(
@@ -54,32 +27,35 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    _fetchData();
     return Scaffold(
         appBar: AppBar(
           title: const Text('Overwatched'),
         ),
-        body: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-            child: ListView.builder(
-                itemCount: _data.length,
+        body: Observer(
+          builder: (_) {
+            return ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                itemCount: serieStore.series.length,
                 itemBuilder: (context, index) {
+                  final serie = serieStore.series[index];
                   return GestureDetector(
                     child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: SerieCard(_data[index])),
+                        child: SerieCard(serie)),
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) =>
-                              SeriesDetailPage(serie: _data[index]),
+                              SeriesDetailPage(serie: serie),
                         ),
                       );
                     },
                   );
                 }
-            )
+            );
+          },
         ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: () => _onClickAdd(context),
         child: const Icon(Icons.add),
