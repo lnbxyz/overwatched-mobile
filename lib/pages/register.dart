@@ -22,8 +22,8 @@ class _RegisterPageState extends State<RegisterPage> {
     try {
       await userStore.create(user);
       _login(context);
-    } on Exception catch (_, e) {
-
+    } catch (err) {
+      print(err);
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Um erro ocorreu ao criar a conta. Tente novamente.'))
       );

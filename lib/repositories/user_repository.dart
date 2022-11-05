@@ -8,15 +8,21 @@ class UserRepository {
   Future<Object?> register(LoginRequest user) async {
     const String url = "http://localhost:3000/users";
 
-    String userJson = jsonEncode( user, toEncodable: (Object? value) => value is LoginRequest
+    String userJson = jsonEncode( user, toEncodable: (value) => value is LoginRequest
         ? LoginRequest.toJson(value)
         : throw UnsupportedError('Cannot convert to JSON: $value'));
-    Response res = await post(Uri.parse(url), body: userJson);
+    print(userJson);
+    Response res = await post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: userJson);
 
-    if (res.statusCode == 200) {
+    if (res.statusCode == 201) {
       return res.body;
     } else {
-      throw "Error registering";
+      throw "${res.statusCode}: ${res.body}";
     }
   }
 
