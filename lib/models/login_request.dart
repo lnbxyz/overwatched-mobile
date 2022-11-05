@@ -1,16 +1,16 @@
-import 'package:mobx/mobx.dart';
-
-//flutter pub run build_runner build
-part 'login_request.g.dart';
-
-class LoginRequest = _LoginRequest with _$LoginRequest;
-
-abstract class _LoginRequest with Store {
+class LoginRequest {
   String username;
   String password;
 
-  _LoginRequest({
+  LoginRequest({
     this.username = '',
     this.password = '',
   });
+
+  LoginRequest.fromJson(Map<String, dynamic> json)
+      : username = json['username'],
+        password = json['password'];
+
+  static Map<String, dynamic> toJson(LoginRequest value) =>
+      {'username': value.username, 'password': value.password};
 }
