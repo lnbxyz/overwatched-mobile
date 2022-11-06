@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart';
 import 'package:overwatched/models/login_request.dart';
@@ -19,10 +20,12 @@ class UserRepository {
         },
         body: userJson);
 
+    print(res.body);
     if (res.statusCode == 201) {
       return res.body;
     } else {
-      throw "${res.statusCode}: ${res.body}";
+      Map<String, String> map = Map.castFrom(json.decode(res.body));
+      throw HttpException(map['message']!);
     }
   }
 

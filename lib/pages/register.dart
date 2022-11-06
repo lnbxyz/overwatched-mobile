@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:overwatched/models/login_request.dart';
 
@@ -24,8 +26,12 @@ class _RegisterPageState extends State<RegisterPage> {
       _login(context);
     } catch (err) {
       print(err);
+      String message = 'Um erro ocorreu ao criar a conta. Tente novamente.';
+      if (err is HttpException) {
+        message = err.message;
+      }
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Um erro ocorreu ao criar a conta. Tente novamente.'))
+          SnackBar(content: Text(message))
       );
     }
 
