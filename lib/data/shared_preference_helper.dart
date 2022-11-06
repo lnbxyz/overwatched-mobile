@@ -10,8 +10,7 @@ class SharedPreferenceHelper {
     await prefs.setString(token, userToken);
   }
 
-  String? getUserToken() {
-    final userToken = prefs.getString(token);
-    return userToken;
+  String getUserToken() {
+    return prefs.getString(token) ?? "";
   }
 }
