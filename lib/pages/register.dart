@@ -23,19 +23,34 @@ class _RegisterPageState extends State<RegisterPage> {
 
     try {
       await userStore.create(user);
-      _login(context);
+      _doAutoLogin(context, user);
     } catch (err) {
       print(err);
       String message = 'Um erro ocorreu ao criar a conta. Tente novamente.';
       if (err is HttpException) {
         message = err.message;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message))
-      );
+      showSnackbar(context, message);
     }
+  }
 
+  void _doAutoLogin(BuildContext context, LoginRequest user) async {
+    UserStore userStore = UserStore();
 
+    try {
+      await userStore.login(user);
+      _login(context);
+    } catch (err) {
+      print(err);
+      String message = 'Um erro ocorreu ao fazer o login. Tente novamente.';
+      if (err is HttpException) {
+        message = err.message;
+      }
+      showSnackbar(context, message);
+
+      await Future.delayed(const Duration(seconds: 1));
+      _goToLoginPage(context);
+    }
   }
 
   void _login(BuildContext context) {
@@ -46,8 +61,14 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  void _onClickHasAccount(BuildContext context) {
+  void _goToLoginPage(BuildContext context) {
     Navigator.of(context).pop();
+  }
+
+  void showSnackbar(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(text))
+    );
   }
 
   @override
@@ -95,7 +116,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         TextButton(
-                            onPressed: () => _onClickHasAccount(context),
+                            onPressed: () => _goToLoginPage(context),
                             child: const Text("Já possui conta?")),
                         OutlinedButton(
                             onPressed: () => _onClickCreate(context),
