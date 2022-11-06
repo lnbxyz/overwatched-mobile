@@ -1,17 +1,24 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:http_interceptor/http/intercepted_client.dart';
 import 'package:overwatched/models/serie.dart';
+import 'package:overwatched/network/auth_interceptor.dart';
 
 class SerieRepository {
+
+  Client client = InterceptedClient.build(interceptors: [
+    AuthInterceptor()
+  ]);
+
   Future<Serie?> create(Serie serie) async {
     return null;
   }
 
   Future<List<Serie>> list() async {
-    const String url = "http://10.0.2.2:3000/series";
+    const String url = "http://localhost:3000/series";
 
-    Response res = await get(Uri.parse(url));
+    Response res = await client.get(Uri.parse(url));
 
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
