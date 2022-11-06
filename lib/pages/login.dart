@@ -57,6 +57,9 @@ class LoginPage extends StatelessWidget {
                       border: OutlineInputBorder(),
                       labelText: 'Senha',
                     ),
+                    obscureText: true,
+                    enableSuggestions: false,
+                    autocorrect: false,
                   ),
                 ),
                 Padding(

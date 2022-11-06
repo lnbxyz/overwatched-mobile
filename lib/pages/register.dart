@@ -77,6 +77,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       labelText: 'Senha',
                     ),
                     controller: passwordController,
+                    obscureText: true,
+                    enableSuggestions: false,
+                    autocorrect: false,
                   ),
                 ),
                 Padding(
