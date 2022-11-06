@@ -1,4 +1,5 @@
 import 'package:mobx/mobx.dart';
+import 'package:overwatched/models/login_response.dart';
 import 'package:overwatched/models/serie.dart';
 import 'package:overwatched/repositories/serie_repository.dart';
 
@@ -24,9 +25,9 @@ abstract class _UserStore with Store {
   }
 
   @action
-  Future<void> login(LoginRequest user) async {
+  Future<LoginResponse> login(LoginRequest user) async {
     isLoading = true;
-    await repository.login(user);
+    return Future.value(await repository.login(user));
   }
 
 }

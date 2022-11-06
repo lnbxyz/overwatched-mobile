@@ -29,7 +29,26 @@ class UserRepository {
     }
   }
 
-  Future<LoginResponse?> login(LoginRequest user) async {
-    return null;
+  Future<LoginResponse> login(LoginRequest user) async {
+    const String url = "http://localhost:3000/auth/login";
+
+    String userJson = jsonEncode( user, toEncodable: (value) => value is LoginRequest
+        ? LoginRequest.toJson(value)
+        : throw UnsupportedError('Cannot convert to JSON: $value'));
+    print(userJson);
+    Response res = await post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: userJson);
+
+    print(res.body);
+    if (res.statusCode == 200) {
+      return LoginResponse.fromJson(jsonDecode(res.body));
+    } else {
+      Map<String, String> map = Map.castFrom(json.decode(res.body));
+      throw HttpException(map['message']!);
+    }
   }
 }

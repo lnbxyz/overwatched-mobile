@@ -37,7 +37,7 @@ mixin _$UserStore on _UserStore, Store {
       AsyncAction('_UserStore.login', context: context);
 
   @override
-  Future<void> login(LoginRequest user) {
+  Future<LoginResponse> login(LoginRequest user) {
     return _$loginAsyncAction.run(() => super.login(user));
   }
 

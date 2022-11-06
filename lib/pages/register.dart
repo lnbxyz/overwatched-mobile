@@ -17,7 +17,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
-  Future<void> _onClickCreate(BuildContext context) async {
+  void _onClickCreate(BuildContext context) async {
     UserStore userStore = UserStore();
     LoginRequest user = LoginRequest(username: usernameController.text, password: passwordController.text);
 
