@@ -1,13 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:overwatched/pages/login.dart';
+import 'package:overwatched/models/login_request.dart';
 
+import '../stores/user_store.dart';
 import 'home.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
-  void _onClickCreate(BuildContext context) {
-    _login(context);
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  Future<void> _onClickCreate(BuildContext context) async {
+    UserStore userStore = UserStore();
+    LoginRequest user = LoginRequest(username: usernameController.text, password: passwordController.text);
+
+    try {
+      await userStore.create(user);
+      _login(context);
+    } catch (err) {
+      print(err);
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Um erro ocorreu ao criar a conta. Tente novamente.'))
+      );
+    }
+
+
   }
 
   void _login(BuildContext context) {
@@ -44,6 +66,7 @@ class RegisterPage extends StatelessWidget {
                       border: OutlineInputBorder(),
                       labelText: 'Username',
                     ),
+                    controller: usernameController
                   ),
                 ),
                 Padding(
@@ -53,6 +76,7 @@ class RegisterPage extends StatelessWidget {
                       border: OutlineInputBorder(),
                       labelText: 'Senha',
                     ),
+                    controller: passwordController,
                   ),
                 ),
                 Padding(
@@ -63,7 +87,7 @@ class RegisterPage extends StatelessWidget {
                       children: [
                         TextButton(
                             onPressed: () => _onClickHasAccount(context),
-                            child: const Text("Jã possui conta?")),
+                            child: const Text("Já possui conta?")),
                         OutlinedButton(
                             onPressed: () => _onClickCreate(context),
                             child: const Text('Criar')),
