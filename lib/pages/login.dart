@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:overwatched/pages/register.dart';
 
 import '../models/login_request.dart';
-import '../models/login_response.dart';
 import '../stores/user_store.dart';
 import 'home.dart';
 
@@ -24,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
     LoginRequest user = LoginRequest(username: usernameController.text, password: passwordController.text);
 
     try {
-      LoginResponse res = await userStore.login(user);
+      await userStore.login(user);
       _login(context);
     } catch (err) {
       print(err);
@@ -76,6 +75,7 @@ class _LoginPageState extends State<LoginPage> {
                       border: OutlineInputBorder(),
                       labelText: 'Username',
                     ),
+                    controller: usernameController,
                   ),
                 ),
                 Padding(
@@ -85,6 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                       border: OutlineInputBorder(),
                       labelText: 'Senha',
                     ),
+                    controller: passwordController,
                     obscureText: true,
                     enableSuggestions: false,
                     autocorrect: false,

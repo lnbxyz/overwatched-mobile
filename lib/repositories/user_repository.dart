@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart';
+import 'package:overwatched/data/shared_preference_helper.dart';
 import 'package:overwatched/models/login_request.dart';
 import 'package:overwatched/models/login_response.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserRepository {
   Future<Object?> register(LoginRequest user) async {
@@ -45,7 +47,12 @@ class UserRepository {
 
     print(res.body);
     if (res.statusCode == 200) {
-      return LoginResponse.fromJson(jsonDecode(res.body));
+      LoginResponse loginResponse = LoginResponse.fromJson(jsonDecode(res.body));
+
+      var prefs = SharedPreferenceHelper(prefs: await SharedPreferences.getInstance());
+      prefs.setUserToken(userToken: loginResponse.access_token);
+      
+      return loginResponse;
     } else {
       Map<String, String> map = Map.castFrom(json.decode(res.body));
       throw HttpException(map['message']!);
