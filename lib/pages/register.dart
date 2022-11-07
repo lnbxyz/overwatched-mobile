@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:overwatched/models/login_request.dart';
 
@@ -15,21 +17,40 @@ class _RegisterPageState extends State<RegisterPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
-  Future<void> _onClickCreate(BuildContext context) async {
+  void _onClickCreate(BuildContext context) async {
     UserStore userStore = UserStore();
     LoginRequest user = LoginRequest(username: usernameController.text, password: passwordController.text);
 
     try {
       await userStore.create(user);
+      _doAutoLogin(context, user);
+    } catch (err) {
+      print(err);
+      String message = 'Um erro ocorreu ao criar a conta. Tente novamente.';
+      if (err is HttpException) {
+        message = err.message;
+      }
+      showSnackbar(context, message);
+    }
+  }
+
+  void _doAutoLogin(BuildContext context, LoginRequest user) async {
+    UserStore userStore = UserStore();
+
+    try {
+      await userStore.login(user);
       _login(context);
     } catch (err) {
       print(err);
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Um erro ocorreu ao criar a conta. Tente novamente.'))
-      );
+      String message = 'Um erro ocorreu ao fazer o login. Tente novamente.';
+      if (err is HttpException) {
+        message = err.message;
+      }
+      showSnackbar(context, message);
+
+      await Future.delayed(const Duration(seconds: 1));
+      _goToLoginPage(context);
     }
-
-
   }
 
   void _login(BuildContext context) {
@@ -40,8 +61,14 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  void _onClickHasAccount(BuildContext context) {
+  void _goToLoginPage(BuildContext context) {
     Navigator.of(context).pop();
+  }
+
+  void showSnackbar(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(text))
+    );
   }
 
   @override
@@ -77,6 +104,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       labelText: 'Senha',
                     ),
                     controller: passwordController,
+                    obscureText: true,
+                    enableSuggestions: false,
+                    autocorrect: false,
                   ),
                 ),
                 Padding(
@@ -86,7 +116,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         TextButton(
-                            onPressed: () => _onClickHasAccount(context),
+                            onPressed: () => _goToLoginPage(context),
                             child: const Text("Já possui conta?")),
                         OutlinedButton(
                             onPressed: () => _onClickCreate(context),

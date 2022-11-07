@@ -1,14 +1,13 @@
-import 'package:mobx/mobx.dart';
-
-//flutter pub run build_runner build
-part 'login_response.g.dart';
-
-class LoginResponse = _LoginResponse with _$LoginResponse;
-
-abstract class _LoginResponse with Store {
+class LoginResponse {
   String access_token;
 
-  _LoginResponse({
+  LoginResponse({
     this.access_token = ''
   });
+
+  LoginResponse.fromJson(Map<String, dynamic> json)
+      : access_token = json['access_token'];
+
+  static Map<String, dynamic> toJson(LoginResponse value) =>
+      {'access_token': value.access_token};
 }
