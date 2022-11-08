@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:http_interceptor/http/intercepted_client.dart';
+import 'package:overwatched/data/constants.dart';
 import 'package:overwatched/models/serie.dart';
 import 'package:overwatched/network/auth_interceptor.dart';
 
@@ -16,7 +17,7 @@ class SerieRepository {
   }
 
   Future<List<Serie>> list() async {
-    const String url = "http://localhost:3000/series";
+    const String url = "$API_BASE_URL/series";
 
     Response res = await client.get(Uri.parse(url));
 
