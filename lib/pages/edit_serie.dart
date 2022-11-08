@@ -148,7 +148,7 @@ class _EditSeriePageState extends State<EditSeriePage> {
                         labelText: 'Nota IMDb',
                         suffixText: '/ 10.0'),
                     keyboardType: TextInputType.number,
-                    initialValue: widget.serie?.score.toStringAsFixed(1)),
+                    initialValue: widget.serie?.score?.toStringAsFixed(1)),
               ),
               Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12),

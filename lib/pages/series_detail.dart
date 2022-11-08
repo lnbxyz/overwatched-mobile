@@ -18,7 +18,6 @@ class SeriesDetailPage extends StatefulWidget {
 }
 
 class _SeriesDetailPageState extends State<SeriesDetailPage> {
-
   _onClickEdit(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -41,27 +40,24 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
               alignment: Alignment.bottomLeft,
               children: [
                 ShaderMask(
-                  blendMode: BlendMode.srcATop,
-                  shaderCallback: (Rect bounds) {
-                    return const LinearGradient(
-                      colors: [
-                        Color.fromARGB(0, 250, 250, 250),
-                        Color.fromARGB(255, 250, 250, 250)
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: [0.5, 0.9]
-                    ).createShader(bounds);
-                  },
-                  child: Image.network(widget.serie.coverUrl)
-                ),
+                    blendMode: BlendMode.srcATop,
+                    shaderCallback: (Rect bounds) {
+                      return const LinearGradient(
+                          colors: [
+                            Color.fromARGB(0, 250, 250, 250),
+                            Color.fromARGB(255, 250, 250, 250)
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          stops: [0.5, 0.9]).createShader(bounds);
+                    },
+                    child: widget.serie.coverUrl != null
+                        ? Image.network(widget.serie.coverUrl!)
+                        : null),
                 Padding(
                     padding: const EdgeInsets.all(8),
-                    child: Text(
-                        widget.serie.name,
-                        style: Theme.of(context).textTheme.headline2
-                    )
-                ),
+                    child: Text(widget.serie.name,
+                        style: Theme.of(context).textTheme.headline2)),
               ],
             ),
             Padding(
@@ -71,23 +67,19 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                 children: [
                   SeriesInfoRow(
                       icon: Icons.calendar_today_outlined,
-                      text: '${widget.serie.releaseYear} - ${widget.serie.endingYear.isNotEmpty ? widget.serie.endingYear : 'Presente' }'
-                  ),
+                      text:
+                          '${widget.serie.releaseYear} - ${(widget.serie.endingYear?.isNotEmpty ?? true) ? widget.serie.endingYear : 'Presente'}'),
                   const SizedBox(height: 8),
                   SeriesInfoRow(
                       icon: Icons.theater_comedy_outlined,
-                      text: widget.serie.genres.join(', ')
-                  ),
+                      text: widget.serie.genres.join(', ')),
                   const SizedBox(height: 8),
                   SeriesInfoRow(
                       icon: Icons.grade_outlined,
-                      text: '${widget.serie.score.toStringAsFixed(1)}/10.0'
-                  ),
+                      text: '${widget.serie.score?.toStringAsFixed(1)}/10.0'),
                   const SizedBox(height: 16),
-                  Text(
-                    widget.serie.description,
-                    style: Theme.of(context).textTheme.bodyMedium
-                  ),
+                  Text(widget.serie.description ?? "",
+                      style: Theme.of(context).textTheme.bodyMedium),
                   const SizedBox(height: 32),
                   SeasonList(serieId: widget.serie.id),
                   const SizedBox(height: 200),
