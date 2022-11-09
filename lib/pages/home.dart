@@ -34,7 +34,8 @@ class _HomePageState extends State<HomePage> {
         body: Observer(
           builder: (_) {
             return ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
                 itemCount: serieStore.series.length,
                 itemBuilder: (context, index) {
                   final serie = serieStore.series[index];
@@ -45,22 +46,18 @@ class _HomePageState extends State<HomePage> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) =>
-                              SeriesDetailPage(serie: serie),
+                          builder: (context) => SeriesDetailPage(serie: serie),
                         ),
                       );
                     },
                   );
-                }
-            );
+                });
           },
         ),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _onClickAdd(context),
-        child: const Icon(Icons.add),
-      )
-    );
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => _onClickAdd(context),
+          child: const Icon(Icons.add),
+        ));
   }
 }
 
@@ -88,14 +85,15 @@ class SerieCard extends StatelessWidget {
                     child: AspectRatio(
                       aspectRatio: 9 / 16,
                       child: ClipRRect(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(4.0)),
-                        child: Image.network(
-                          serie.coverUrl,
-                          height: 120,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(4.0)),
+                          child: serie.coverUrl != null
+                              ? Image.network(
+                                  serie.coverUrl!,
+                                  height: 120,
+                                  fit: BoxFit.cover,
+                                )
+                              : null),
                     ),
                   ),
                 ),
@@ -112,19 +110,17 @@ class SerieCard extends StatelessWidget {
                           textAlign: TextAlign.left,
                         ),
                         Text(
-                          serie.description,
+                          serie.description ?? "",
                           style: Theme.of(context).textTheme.bodyText2,
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                         ),
                         SeriesInfoRow(
                             icon: Icons.theater_comedy_outlined,
-                            text: serie.genres.join(', ')
-                        ),
+                            text: serie.genres.join(', ')),
                         SeriesInfoRow(
                             icon: Icons.grade_outlined,
-                            text: '${serie.score.toStringAsFixed(1)}/10.0'
-                        ),
+                            text: '${serie.score?.toStringAsFixed(1)}/10.0'),
                       ],
                     ),
                   ),

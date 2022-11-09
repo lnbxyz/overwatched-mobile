@@ -7,9 +7,11 @@ import 'package:overwatched/models/login_request.dart';
 import 'package:overwatched/models/login_response.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../data/constants.dart';
+
 class UserRepository {
   Future<Object?> register(LoginRequest user) async {
-    const String url = "http://localhost:3000/users";
+    const String url = "$API_BASE_URL/users";
 
     String userJson = jsonEncode( user, toEncodable: (value) => value is LoginRequest
         ? LoginRequest.toJson(value)
@@ -32,7 +34,7 @@ class UserRepository {
   }
 
   Future<LoginResponse> login(LoginRequest user) async {
-    const String url = "http://localhost:3000/auth/login";
+    const String url = "$API_BASE_URL/auth/login";
 
     String userJson = jsonEncode( user, toEncodable: (value) => value is LoginRequest
         ? LoginRequest.toJson(value)
