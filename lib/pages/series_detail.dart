@@ -6,7 +6,6 @@ import 'package:overwatched/components/series_info_ROW.dart';
 import 'package:overwatched/models/serie.dart';
 import 'package:overwatched/repositories/serie_repository.dart';
 
-import '../models/serie.dart';
 import 'edit_serie.dart';
 
 class SeriesDetailPage extends StatefulWidget {
@@ -152,7 +151,16 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                     const SizedBox(height: 16),
                     Text(serie.description,
                         style: Theme.of(context).textTheme.bodyMedium),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        OutlinedButton.icon(
+                          icon: const Icon(Icons.add),
+                          label: const Text('Adicionar temporada'),
+                          onPressed: () {  },
+                        )
+                      ],
+                    ),
                     SeasonList(serieId: serie.id),
                     const SizedBox(height: 200),
                   ],
