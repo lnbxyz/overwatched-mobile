@@ -14,7 +14,31 @@ class SerieRepository {
   ]);
 
   Future<Serie?> create(Serie serie) async {
-    return null;
+    const String url = "$API_BASE_URL/series";
+
+    String body = jsonEncode(serie, toEncodable: (value) => value is Serie
+      ? Serie.toJson(serie)
+      : throw UnsupportedError('Cannot convert to JSON: $value')
+    );
+
+    Response res = await client.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: body
+    );
+
+    print(res.statusCode);
+    if (res.statusCode == 201) {
+      print("success :)");
+      return Serie.fromJson(jsonDecode(res.body));
+    } else {
+      print("error :(");
+      Map<String, String> map = Map.castFrom(json.decode(res.body));
+      throw HttpException(map['message']!);
+    }
+
   }
 
   Future<List<Serie>> list() async {
@@ -33,7 +57,6 @@ class SerieRepository {
       Map<String, String> map = Map.castFrom(json.decode(res.body));
       throw HttpException(map['message']!);
     }
-
   }
 
   Future<Serie?> getOne() async {

@@ -51,8 +51,8 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                           end: Alignment.bottomCenter,
                           stops: [0.5, 0.9]).createShader(bounds);
                     },
-                    child: widget.serie.coverUrl != null
-                        ? Image.network(widget.serie.coverUrl!)
+                    child: widget.serie.coverUrl.isNotEmpty
+                        ? Image.network(widget.serie.coverUrl)
                         : null),
                 Padding(
                     padding: const EdgeInsets.all(8),
@@ -68,7 +68,7 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                   SeriesInfoRow(
                       icon: Icons.calendar_today_outlined,
                       text:
-                          '${widget.serie.releaseYear} - ${(widget.serie.endingYear?.isNotEmpty ?? true) ? widget.serie.endingYear : 'Presente'}'),
+                          '${widget.serie.releaseYear} - ${(widget.serie.endingYear.isNotEmpty) ? widget.serie.endingYear : 'Presente'}'),
                   const SizedBox(height: 8),
                   SeriesInfoRow(
                       icon: Icons.theater_comedy_outlined,
@@ -78,7 +78,7 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                       icon: Icons.grade_outlined,
                       text: '${widget.serie.score?.toStringAsFixed(1)}/10.0'),
                   const SizedBox(height: 16),
-                  Text(widget.serie.description ?? "",
+                  Text(widget.serie.description,
                       style: Theme.of(context).textTheme.bodyMedium),
                   const SizedBox(height: 32),
                   SeasonList(serieId: widget.serie.id),

@@ -22,15 +22,18 @@ abstract class _SerieStore with Store {
 
   @action
   Future<void> refresh() async {
+    series.clear();
     series.addAll(await repository.list());
     isLoading = false;
+    print("refreshed series!");
   }
 
   @action
   Future<void> create(Serie serie) async {
     isLoading = true;
     await repository.create(serie);
-    refresh();
+    await refresh();
+    isLoading = true;
   }
 
   @action
