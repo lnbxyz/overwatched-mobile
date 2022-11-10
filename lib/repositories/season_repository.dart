@@ -59,12 +59,30 @@ class SeasonRepository {
     }
   }
 
-  Future<Season?> getOne() async {
-    return null;
-  }
+  Future<Season> update(Season season) async {
+    String url = "$API_BASE_URL/seasons/${season.id}";
 
-  Future<Season?> update(Season season) async {
-    return null;
+    String body = jsonEncode(season, toEncodable: (value) => value is Season
+        ? Season.toJson(season)
+        : throw UnsupportedError('Cannot convert to JSON: $value')
+    );
+    print(body);
+
+    Response res = await client.patch(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: body
+    );
+
+    print(res.body);
+    if (res.statusCode == 200) {
+      return Season.fromJson(jsonDecode(res.body));
+    } else {
+      Map<String, String> map = Map.castFrom(json.decode(res.body));
+      throw HttpException(map['message']!);
+    }
   }
 
   Future<void> delete(Season season) async {

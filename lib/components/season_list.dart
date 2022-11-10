@@ -39,6 +39,11 @@ class _SeasonListState extends State<SeasonList> {
         EditSeasonPage(serie: widget.serie)).whenComplete(() => refresh());
   }
 
+  void _edit(Season season) {
+    showDialog(context: context, builder: (BuildContext context) =>
+        EditSeasonPage(serie: widget.serie, season: season)).whenComplete(() => refresh());
+  }
+
   void _delete(Season season) async {
     try {
       seasonRepository.delete(season).then((value) => refresh());
@@ -93,9 +98,7 @@ class _SeasonListState extends State<SeasonList> {
                         ),
                         IconButton(
                           icon: const Icon(Icons.edit_outlined),
-                          onPressed: () {
-                            // Respond to button press
-                          },
+                          onPressed: () => _edit(snapshot.data![index]),
                         ),
                       ],
                     ),
