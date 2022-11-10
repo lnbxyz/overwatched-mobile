@@ -1,9 +1,10 @@
-import 'dart:ui';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:overwatched/components/season_list.dart';
 import 'package:overwatched/components/series_info_ROW.dart';
 import 'package:overwatched/models/serie.dart';
+import 'package:overwatched/repositories/serie_repository.dart';
 
 import '../models/serie.dart';
 import 'edit_serie.dart';
@@ -18,11 +19,56 @@ class SeriesDetailPage extends StatefulWidget {
 }
 
 class _SeriesDetailPageState extends State<SeriesDetailPage> {
-  _onClickEdit(BuildContext context) {
+  final serieRepository = SerieRepository();
+
+  _onClickEdit(BuildContext context) async {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => EditSeriePage(serie: widget.serie),
       ),
+    );
+  }
+
+  void _onClickDelete(BuildContext context) async {
+    showDialog(
+        context: context,
+        builder: (BuildContext alertContext) => AlertDialog(
+          title: const Text('Tem certeza de que deseja apagar a série?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Voltar"),
+              onPressed: () {
+                Navigator.of(alertContext, rootNavigator: true).pop();
+              },
+            ),
+            TextButton(
+              child: const Text("Sim"),
+              onPressed: () {
+                _delete(context);
+                Navigator.of(alertContext, rootNavigator: true).pop();
+              },
+            ),
+          ],
+        )
+    );
+  }
+
+  void _delete(BuildContext context) async {
+    try {
+      serieRepository.delete(widget.serie).then((value) => Navigator.of(context).pop(true));
+    } catch (err) {
+      String message = 'Um erro ocorreu ao apagar a série';
+      if (err is HttpException) {
+        message += ' (${err.message})';
+      }
+      message += '. Tente novamente.';
+      showSnackbar(context, message);
+    }
+  }
+
+  void showSnackbar(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(text))
     );
   }
 
@@ -31,6 +77,12 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.serie.name),
+        actions: [
+          IconButton(
+            onPressed: () => _onClickDelete(context),
+            icon: const Icon(Icons.delete)
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

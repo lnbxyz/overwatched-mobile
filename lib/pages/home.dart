@@ -69,12 +69,16 @@ class _HomePageState extends State<HomePage> {
           itemBuilder: (context, index) {
             final serie = series[index];
             return GestureDetector(
-              onTap: () {
-                Navigator.of(context).push(
+              onTap: () async {
+                final shouldRefresh = await Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => SeriesDetailPage(serie: serie),
                   ),
                 );
+
+                if (shouldRefresh) {
+                  refresh();
+                }
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),

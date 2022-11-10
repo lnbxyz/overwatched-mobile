@@ -29,12 +29,9 @@ class SerieRepository {
       body: body
     );
 
-    print(res.statusCode);
     if (res.statusCode == 201) {
-      print("success :)");
       return Serie.fromJson(jsonDecode(res.body));
     } else {
-      print("error :(");
       Map<String, String> map = Map.castFrom(json.decode(res.body));
       throw HttpException(map['message']!);
     }
@@ -46,7 +43,6 @@ class SerieRepository {
 
     Response res = await client.get(Uri.parse(url));
 
-    print(res.body);
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
 
@@ -67,7 +63,14 @@ class SerieRepository {
     return null;
   }
 
-  Future<bool> delete(Serie serie) async {
-    return true;
+  Future<void> delete(Serie? serie) async {
+    String url = "$API_BASE_URL/series/${serie?.id}";
+
+    Response res = await client.delete(Uri.parse(url));
+
+    if (res.statusCode != 200) {
+      Map<String, String> map = Map.castFrom(json.decode(res.body));
+      throw HttpException(map['message']!);
+    }
   }
 }
