@@ -35,7 +35,6 @@ class SerieRepository {
       Map<String, String> map = Map.castFrom(json.decode(res.body));
       throw HttpException(map['message']!);
     }
-
   }
 
   Future<List<Serie>> list() async {
@@ -60,11 +59,31 @@ class SerieRepository {
 }
 
   Future<Serie?> update(Serie serie) async {
-    return null;
+    final String url = "$API_BASE_URL/series/${serie.id}";
+
+    String body = jsonEncode(serie, toEncodable: (value) => value is Serie
+        ? Serie.toJson(serie)
+        : throw UnsupportedError('Cannot convert to JSON: $value')
+    );
+
+    Response res = await client.patch(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: body
+    );
+
+    if (res.statusCode == 200) {
+      return Serie.fromJson(jsonDecode(res.body));
+    } else {
+      Map<String, String> map = Map.castFrom(json.decode(res.body));
+      throw HttpException(map['message']!);
+    }
   }
 
-  Future<void> delete(Serie? serie) async {
-    String url = "$API_BASE_URL/series/${serie?.id}";
+  Future<void> delete(Serie serie) async {
+    final String url = "$API_BASE_URL/series/${serie.id}";
 
     Response res = await client.delete(Uri.parse(url));
 

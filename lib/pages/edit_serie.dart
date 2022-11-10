@@ -41,16 +41,24 @@ class _EditSeriePageState extends State<EditSeriePage> {
   }
 
   void _onClickSave(BuildContext context) async {
+    final newSerie = Serie(
+      name: _nameController.text,
+      description: _descriptionController.text,
+      coverUrl: _coverUrlController.text,
+      releaseYear: _releaseYearController.text,
+      endingYear: _endingYearController.text,
+      score: _scoreController.text.isNotEmpty ? double.parse(
+          _scoreController.text) : null,
+      genres: _genreValues,
+    );
+
     try {
-      await serieRepository.create(Serie(
-        name: _nameController.text,
-        description: _descriptionController.text,
-        coverUrl: _coverUrlController.text,
-        releaseYear: _releaseYearController.text,
-        endingYear: _endingYearController.text,
-        score: _scoreController.text.isNotEmpty ? double.parse(_scoreController.text) : null,
-        genres: _genreValues,
-      ));
+      if (widget.serie == null) {
+        await serieRepository.create(newSerie);
+      } else {
+        newSerie.id = widget.serie!.id;
+        await serieRepository.update(newSerie);
+      }
 
       showDialog(
         context: context,
