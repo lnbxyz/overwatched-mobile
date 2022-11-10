@@ -20,13 +20,28 @@ class SeriesDetailPage extends StatefulWidget {
 
 class _SeriesDetailPageState extends State<SeriesDetailPage> {
   final serieRepository = SerieRepository();
+  late Serie serie;
+  bool hasUpdated = false;
 
   _onClickEdit(BuildContext context) async {
-    Navigator.of(context).push(
+    final Serie? updatedSerie = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => EditSeriePage(serie: widget.serie),
+        builder: (context) => EditSeriePage(serie: serie),
       ),
     );
+
+    if (updatedSerie != null) {
+      setState(() {
+        serie = updatedSerie;
+        hasUpdated = true;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    serie = widget.serie;
+    super.initState();
   }
 
   void _onClickDelete(BuildContext context) async {
@@ -55,7 +70,7 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
 
   void _delete(BuildContext context) async {
     try {
-      serieRepository.delete(widget.serie).then((value) => Navigator.of(context).pop(true));
+      serieRepository.delete(serie).then((value) => Navigator.of(context).pop(serie));
     } catch (err) {
       String message = 'Um erro ocorreu ao apagar a série';
       if (err is HttpException) {
@@ -74,76 +89,82 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.serie.name),
-        actions: [
-          IconButton(
-            onPressed: () => _onClickDelete(context),
-            icon: const Icon(Icons.delete)
-          )
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              alignment: Alignment.bottomLeft,
-              children: [
-                ShaderMask(
-                    blendMode: BlendMode.srcATop,
-                    shaderCallback: (Rect bounds) {
-                      return const LinearGradient(
-                          colors: [
-                            Color.fromARGB(0, 250, 250, 250),
-                            Color.fromARGB(255, 250, 250, 250)
-                          ],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          stops: [0.5, 0.9]).createShader(bounds);
-                    },
-                    child: widget.serie.coverUrl.isNotEmpty
-                        ? Image.network(widget.serie.coverUrl)
-                        : null),
-                Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(widget.serie.name,
-                        style: Theme.of(context).textTheme.headline2)),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SeriesInfoRow(
-                      icon: Icons.calendar_today_outlined,
-                      text:
-                          '${widget.serie.releaseYear} - ${(widget.serie.endingYear.isNotEmpty) ? widget.serie.endingYear : 'Presente'}'),
-                  const SizedBox(height: 8),
-                  SeriesInfoRow(
-                      icon: Icons.theater_comedy_outlined,
-                      text: widget.serie.genres.join(', ')),
-                  const SizedBox(height: 8),
-                  SeriesInfoRow(
-                      icon: Icons.grade_outlined,
-                      text: '${widget.serie.score?.toStringAsFixed(1)}/10.0'),
-                  const SizedBox(height: 16),
-                  Text(widget.serie.description,
-                      style: Theme.of(context).textTheme.bodyMedium),
-                  const SizedBox(height: 32),
-                  SeasonList(serieId: widget.serie.id),
-                  const SizedBox(height: 200),
-                ],
-              ),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.of(context).pop(hasUpdated ? serie : null);
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(serie.name),
+          actions: [
+            IconButton(
+              onPressed: () => _onClickDelete(context),
+              icon: const Icon(Icons.delete)
             )
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _onClickEdit(context),
-        child: const Icon(Icons.edit),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                alignment: Alignment.bottomLeft,
+                children: [
+                  ShaderMask(
+                      blendMode: BlendMode.srcATop,
+                      shaderCallback: (Rect bounds) {
+                        return const LinearGradient(
+                            colors: [
+                              Color.fromARGB(0, 250, 250, 250),
+                              Color.fromARGB(255, 250, 250, 250)
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            stops: [0.5, 0.9]).createShader(bounds);
+                      },
+                      child: serie.coverUrl.isNotEmpty
+                          ? Image.network(serie.coverUrl)
+                          : null),
+                  Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Text(serie.name,
+                          style: Theme.of(context).textTheme.headline2)),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SeriesInfoRow(
+                        icon: Icons.calendar_today_outlined,
+                        text:
+                            '${serie.releaseYear} - ${(serie.endingYear.isNotEmpty) ? serie.endingYear : 'Presente'}'),
+                    const SizedBox(height: 8),
+                    SeriesInfoRow(
+                        icon: Icons.theater_comedy_outlined,
+                        text: serie.genres.join(', ')),
+                    const SizedBox(height: 8),
+                    SeriesInfoRow(
+                        icon: Icons.grade_outlined,
+                        text: '${serie.score?.toStringAsFixed(1)}/10.0'),
+                    const SizedBox(height: 16),
+                    Text(serie.description,
+                        style: Theme.of(context).textTheme.bodyMedium),
+                    const SizedBox(height: 32),
+                    SeasonList(serieId: serie.id),
+                    const SizedBox(height: 200),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => _onClickEdit(context),
+          child: const Icon(Icons.edit),
+        ),
       ),
     );
   }

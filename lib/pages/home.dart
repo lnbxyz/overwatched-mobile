@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:overwatched/models/serie.dart';
 import 'package:overwatched/pages/edit_serie.dart';
 import 'package:overwatched/pages/series_detail.dart';
@@ -21,13 +20,13 @@ class _HomePageState extends State<HomePage> {
   bool isLoading = true;
 
   void _onClickAdd(BuildContext context) async {
-    final shouldRefresh = await Navigator.of(context).push(
+    final Serie? updatedSerie = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const EditSeriePage(),
       ),
     );
 
-    if (shouldRefresh) {
+    if (updatedSerie != null) {
       refresh();
     }
   }
@@ -70,13 +69,13 @@ class _HomePageState extends State<HomePage> {
             final serie = series[index];
             return GestureDetector(
               onTap: () async {
-                final shouldRefresh = await Navigator.of(context).push(
+                final updatedSeries = await Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => SeriesDetailPage(serie: serie),
                   ),
                 );
 
-                if (shouldRefresh) {
+                if (updatedSeries != null) {
                   refresh();
                 }
               },

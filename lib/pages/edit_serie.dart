@@ -97,7 +97,7 @@ class _EditSeriePageState extends State<EditSeriePage> {
         context: context,
         builder: (BuildContext context) =>
         const SimpleAlert(title: 'Série salva com sucesso'),
-      ).whenComplete(() => Navigator.of(context).pop(true));
+      ).whenComplete(() => Navigator.of(context).pop(newSerie));
     } catch (err) {
       String message = 'Um erro ocorreu ao salvar a série';
       if (err is HttpException) {

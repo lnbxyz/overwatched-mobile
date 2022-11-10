@@ -54,10 +54,6 @@ class SerieRepository {
     }
   }
 
-  Future<Serie?> getOne() async {
-    return null;
-}
-
   Future<Serie?> update(Serie serie) async {
     final String url = "$API_BASE_URL/series/${serie.id}";
 
