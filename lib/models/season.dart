@@ -1,20 +1,26 @@
-import 'package:mobx/mobx.dart';
-
-//flutter pub run build_runner build
-part 'season.g.dart';
-
-class Season = _Season with _$Season;
-
-abstract class _Season with Store {
+class Season {
   String id;
   String series;
   String name;
-  int number;
+  int? number;
 
-  _Season({
+  Season({
     this.id = '',
     this.name = '',
     this.number = 0,
     this.series = ''
   });
+
+  Season.fromJson(Map<String, dynamic> json)
+      : id = json['_id'] ?? '',
+        name = json['name'] ?? '',
+        series = json['series'] ?? '',
+        number = json['number'];
+
+  static Map<String, dynamic> toJson(Season value) => {
+    '_id': value.id == '' ? null : value.id,
+    'name': value.name,
+    'series': value.series,
+    'number': value.number,
+  };
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:overwatched/components/season_list.dart';
 import 'package:overwatched/components/series_info_ROW.dart';
 import 'package:overwatched/models/serie.dart';
+import 'package:overwatched/pages/edit_season.dart';
 import 'package:overwatched/repositories/serie_repository.dart';
 
 import 'edit_serie.dart';
@@ -157,7 +158,9 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                         OutlinedButton.icon(
                           icon: const Icon(Icons.add),
                           label: const Text('Adicionar temporada'),
-                          onPressed: () {  },
+                          onPressed: () {
+                            showDialog(context: context, builder: (BuildContext context) => EditSeasonPage(serie: serie));
+                          },
                         )
                       ],
                     ),
