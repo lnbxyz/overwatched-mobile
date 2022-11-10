@@ -153,18 +153,7 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                     Text(serie.description,
                         style: Theme.of(context).textTheme.bodyMedium),
                     const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        OutlinedButton.icon(
-                          icon: const Icon(Icons.add),
-                          label: const Text('Adicionar temporada'),
-                          onPressed: () {
-                            showDialog(context: context, builder: (BuildContext context) => EditSeasonPage(serie: serie));
-                          },
-                        )
-                      ],
-                    ),
-                    SeasonList(serieId: serie.id),
+                    SeasonList(serie: serie),
                     const SizedBox(height: 200),
                   ],
                 ),

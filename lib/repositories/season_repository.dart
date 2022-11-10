@@ -41,8 +41,22 @@ class SeasonRepository {
     }
   }
 
-  Future<List<Season>> list() async {
-    return [];
+  Future<List<Season>> listBySerie(String serieId) async {
+    String url = "$API_BASE_URL/seasons?series=$serieId";
+
+    Response res = await client.get(Uri.parse(url));
+    print(res.body);
+
+    if (res.statusCode == 200) {
+      List<dynamic> body = jsonDecode(res.body);
+
+      return body
+          .map((dynamic json) => Season.fromJson(json))
+          .toList();
+    } else {
+      Map<String, String> map = Map.castFrom(json.decode(res.body));
+      throw HttpException(map['message']!);
+    }
   }
 
   Future<Season?> getOne() async {
