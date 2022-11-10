@@ -5,7 +5,6 @@ import 'package:http/http.dart';
 import 'package:http_interceptor/http/intercepted_client.dart';
 import 'package:overwatched/data/constants.dart';
 import 'package:overwatched/models/episode.dart';
-import 'package:overwatched/models/season.dart';
 import 'package:overwatched/network/auth_interceptor.dart';
 
 class EpisodeRepository {
@@ -38,8 +37,8 @@ class EpisodeRepository {
     }
   }
 
-  Future<List<Episode>> list(Season season) async {
-    final String url = "$API_BASE_URL/episodes?season=${season.id}";
+  Future<List<Episode>> list(String seasonId) async {
+    final String url = "$API_BASE_URL/episodes?season=$seasonId}";
 
     Response res = await client.get(Uri.parse(url));
 
@@ -89,7 +88,7 @@ class EpisodeRepository {
       throw HttpException(map['message']!);
     }
   }
-  
+
   Future<void> toggleWatched(Episode episode, bool isWatched) async {
     final String url = "$API_BASE_URL/episodes/${episode.id}/${isWatched ? 'watched' : 'remove-watched'}";
 
