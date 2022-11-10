@@ -41,14 +41,47 @@ class _EditSeriePageState extends State<EditSeriePage> {
   }
 
   void _onClickSave(BuildContext context) async {
+
+    if (_nameController.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) =>
+          const SimpleAlert(title: 'O campo "Nome" não pode estar vazio.'),
+      );
+      return;
+    }
+
+    if (_releaseYearController.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) =>
+        const SimpleAlert(title: 'O campo "Ano de lançamento" não pode estar vazio.'),
+      );
+      return;
+    }
+
+    double score;
+    if (_scoreController.text.isEmpty) {
+      score = 0;
+    } else {
+      score = double.parse(_scoreController.text);
+      if (score < 0 || score > 10) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) =>
+          const SimpleAlert(title: 'O campo "Nota IMDb" deve ser um valor entre 0 e 10.'),
+        );
+        return;
+      }
+    }
+
     final newSerie = Serie(
       name: _nameController.text,
       description: _descriptionController.text,
       coverUrl: _coverUrlController.text,
       releaseYear: _releaseYearController.text,
       endingYear: _endingYearController.text,
-      score: _scoreController.text.isNotEmpty ? double.parse(
-          _scoreController.text) : null,
+      score: score,
       genres: _genreValues,
     );
 
