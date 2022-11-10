@@ -29,16 +29,12 @@ class SerieRepository {
       body: body
     );
 
-    print(res.statusCode);
     if (res.statusCode == 201) {
-      print("success :)");
       return Serie.fromJson(jsonDecode(res.body));
     } else {
-      print("error :(");
       Map<String, String> map = Map.castFrom(json.decode(res.body));
       throw HttpException(map['message']!);
     }
-
   }
 
   Future<List<Serie>> list() async {
@@ -46,7 +42,6 @@ class SerieRepository {
 
     Response res = await client.get(Uri.parse(url));
 
-    print(res.body);
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
 
@@ -59,15 +54,38 @@ class SerieRepository {
     }
   }
 
-  Future<Serie?> getOne() async {
-    return null;
-}
-
   Future<Serie?> update(Serie serie) async {
-    return null;
+    final String url = "$API_BASE_URL/series/${serie.id}";
+
+    String body = jsonEncode(serie, toEncodable: (value) => value is Serie
+        ? Serie.toJson(serie)
+        : throw UnsupportedError('Cannot convert to JSON: $value')
+    );
+
+    Response res = await client.patch(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: body
+    );
+
+    if (res.statusCode == 200) {
+      return Serie.fromJson(jsonDecode(res.body));
+    } else {
+      Map<String, String> map = Map.castFrom(json.decode(res.body));
+      throw HttpException(map['message']!);
+    }
   }
 
-  Future<bool> delete(Serie serie) async {
-    return true;
+  Future<void> delete(Serie serie) async {
+    final String url = "$API_BASE_URL/series/${serie.id}";
+
+    Response res = await client.delete(Uri.parse(url));
+
+    if (res.statusCode != 200) {
+      Map<String, String> map = Map.castFrom(json.decode(res.body));
+      throw HttpException(map['message']!);
+    }
   }
 }

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -19,38 +18,86 @@ class EditSeriePage extends StatefulWidget {
 class _EditSeriePageState extends State<EditSeriePage> {
   final serieRepository = SerieRepository();
 
-  final _nameController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  final _coverUrlController = TextEditingController();
-  final _releaseYearController = TextEditingController();
-  final _endingYearController = TextEditingController();
-  final _scoreController = TextEditingController();
-  final _textEditingGenresController = TextEditingController();
+  late TextEditingController _nameController;
+  late TextEditingController _descriptionController;
+  late TextEditingController _coverUrlController;
+  late TextEditingController _releaseYearController;
+  late TextEditingController _endingYearController;
+  late TextEditingController _scoreController;
+  late TextEditingController _textEditingGenresController;
   late List<String> _genreValues;
 
   @override
   void initState() {
+    _nameController = TextEditingController(text: widget.serie?.name); // required
+    _descriptionController = TextEditingController(text: widget.serie?.description);
+    _coverUrlController = TextEditingController(text: widget.serie?.coverUrl);
+    _releaseYearController = TextEditingController(text: widget.serie?.releaseYear); // required
+    _endingYearController = TextEditingController(text: widget.serie?.endingYear);
+    _scoreController = TextEditingController(text: widget.serie?.score?.toStringAsFixed(1)); // required 0 - 10
+    _textEditingGenresController = TextEditingController();
     _genreValues = widget.serie?.genres ?? [];
     super.initState();
   }
 
   void _onClickSave(BuildContext context) async {
+
+    if (_nameController.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) =>
+          const SimpleAlert(title: 'O campo "Nome" não pode estar vazio.'),
+      );
+      return;
+    }
+
+    if (_releaseYearController.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) =>
+        const SimpleAlert(title: 'O campo "Ano de lançamento" não pode estar vazio.'),
+      );
+      return;
+    }
+
+    double score;
+    if (_scoreController.text.isEmpty) {
+      score = 0;
+    } else {
+      score = double.parse(_scoreController.text);
+      if (score < 0 || score > 10) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) =>
+          const SimpleAlert(title: 'O campo "Nota IMDb" deve ser um valor entre 0 e 10.'),
+        );
+        return;
+      }
+    }
+
+    final newSerie = Serie(
+      name: _nameController.text,
+      description: _descriptionController.text,
+      coverUrl: _coverUrlController.text,
+      releaseYear: _releaseYearController.text,
+      endingYear: _endingYearController.text,
+      score: score,
+      genres: _genreValues,
+    );
+
     try {
-      await serieRepository.create(Serie(
-        name: _nameController.text,
-        description: _descriptionController.text,
-        coverUrl: _coverUrlController.text,
-        releaseYear: _releaseYearController.text,
-        endingYear: _endingYearController.text,
-        score: _scoreController.text.isNotEmpty ? double.parse(_scoreController.text) : null,
-        genres: _genreValues,
-      ));
+      if (widget.serie == null) {
+        await serieRepository.create(newSerie);
+      } else {
+        newSerie.id = widget.serie!.id;
+        await serieRepository.update(newSerie);
+      }
 
       showDialog(
         context: context,
         builder: (BuildContext context) =>
         const SimpleAlert(title: 'Série salva com sucesso'),
-      ).whenComplete(() => Navigator.of(context).pop(true));
+      ).whenComplete(() => Navigator.of(context).pop(newSerie));
     } catch (err) {
       String message = 'Um erro ocorreu ao salvar a série';
       if (err is HttpException) {
@@ -85,123 +132,132 @@ class _EditSeriePageState extends State<EditSeriePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.serie?.name ?? "Nova série"),
-        ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Text(widget.serie?.name ?? "Nova série",
-                          style: Theme.of(context).textTheme.headline2)),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: TextFormField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Nome',
-                        ),
-                        initialValue: widget.serie?.name,
-                        controller: _nameController,
-                        textInputAction: TextInputAction.next),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: TextFormField(
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Descrição',
-                      ),
-                      minLines: 3,
-                      maxLines: null,
-                      keyboardType: TextInputType.multiline,
-                      initialValue: widget.serie?.description,
-                      controller: _descriptionController,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: TextFormField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'URL da imagem de capa',
-                        ),
-                        keyboardType: TextInputType.url,
-                        initialValue: widget.serie?.coverUrl,
-                        controller: _coverUrlController,
-                        textInputAction: TextInputAction.next),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: TextFormField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Ano de lançamento',
-                        ),
-                        keyboardType: TextInputType.number,
-                        initialValue: widget.serie?.releaseYear,
-                        controller: _releaseYearController,
-                        textInputAction: TextInputAction.next),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: TextFormField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Ano de encerramento',
-                        ),
-                        keyboardType: TextInputType.number,
-                        initialValue: widget.serie?.endingYear,
-                        controller: _endingYearController,
-                        textInputAction: TextInputAction.next),
-                  ),
-                  SizedBox(
-                    height: _genreValues.isNotEmpty ? 30 : 0,
-                    child: buildChips(),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                          border: const OutlineInputBorder(),
-                          labelText: 'Gêneros cinematográficos',
-                          suffixIcon: IconButton(
-                            visualDensity: VisualDensity.compact,
-                            onPressed: _addChip,
-                            icon: const Icon(Icons.add),
-                          )),
-                      controller: _textEditingGenresController,
-                      onEditingComplete: _addChip,
-                    ),
+      appBar: AppBar(
+        title: Text(widget.serie?.name ?? "Nova série"),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Text(
+                  widget.serie?.name ?? "Nova série",
+                  style: Theme.of(context).textTheme.headline2
+                )
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: TextFormField(
-                    decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Nota IMDb',
-                        suffixText: '/ 10.0'),
-                    keyboardType: TextInputType.number,
-                    controller: _scoreController,
-                    initialValue: widget.serie?.score?.toStringAsFixed(1)),
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nome',
+                    border: OutlineInputBorder(),
+                  ),
+                  textInputAction: TextInputAction.next
+                ),
               ),
               Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      OutlinedButton(
-                          onPressed: () => _onClickSave(context),
-                          child: const Text('Salvar')),
-                    ],
-                  ))
-            ]),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: TextFormField(
+                  controller: _descriptionController,
+                  decoration: const InputDecoration(
+                    labelText: 'Descrição',
+                    border: OutlineInputBorder(),
+                  ),
+                  minLines: 3,
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: TextFormField(
+                  controller: _coverUrlController,
+                  decoration: const InputDecoration(
+                    labelText: 'URL da imagem de capa',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.url,
+                  textInputAction: TextInputAction.next
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: TextFormField(
+                  controller: _releaseYearController,
+                  decoration: const InputDecoration(
+                    labelText: 'Ano de lançamento',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.next
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: TextFormField(
+                  controller: _endingYearController,
+                  decoration: const InputDecoration(
+                    labelText: 'Ano de encerramento',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.next
+                ),
+              ),
+              SizedBox(
+                height: _genreValues.isNotEmpty ? 30 : 0,
+                child: buildChips(),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: TextFormField(
+                  controller: _textEditingGenresController,
+                  decoration: InputDecoration(
+                      labelText: 'Gêneros cinematográficos',
+                      border: const OutlineInputBorder(),
+                      suffixIcon: IconButton(
+                        visualDensity: VisualDensity.compact,
+                        onPressed: _addChip,
+                        icon: const Icon(Icons.add),
+                      )
+                  ),
+                  onEditingComplete: _addChip,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: TextFormField(
+                  controller: _scoreController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nota IMDb',
+                    border: OutlineInputBorder(),
+                    suffixText: '/ 10.0'
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    OutlinedButton(
+                      onPressed: () => _onClickSave(context),
+                      child: const Text('Salvar')
+                    ),
+                  ],
+                )
+              )
+            ]
           ),
-        ));
+        ),
+      )
+    );
   }
 
   Widget buildChips() {
@@ -220,11 +276,14 @@ class _EditSeriePageState extends State<EditSeriePage> {
       );
 
       chips.add(
-          Padding(padding: const EdgeInsets.only(right: 8), child: actionChip));
+        Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: actionChip
+        )
+      );
     }
 
     return ListView(
-      // This next line does the trick.
       scrollDirection: Axis.horizontal,
       children: chips,
     );
