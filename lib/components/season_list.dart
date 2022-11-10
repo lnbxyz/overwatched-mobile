@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:overwatched/components/episode_list.dart';
 import 'package:overwatched/models/season.dart';
@@ -37,6 +39,23 @@ class _SeasonListState extends State<SeasonList> {
         EditSeasonPage(serie: widget.serie)).whenComplete(() => refresh());
   }
 
+  void _delete(Season season) async {
+    try {
+      seasonRepository.delete(season).then((value) => refresh());
+    } catch (err) {
+      String message = 'Um erro ocorreu ao apagar a série';
+      if (err is HttpException) {
+        message += ' (${err.message})';
+      }
+      message += '. Tente novamente.';
+      showSnackbar(context, message);
+    }
+  }
+
+  void showSnackbar(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Season>>(
@@ -70,9 +89,7 @@ class _SeasonListState extends State<SeasonList> {
                         Flexible(child: Container()),
                         IconButton(
                           icon: const Icon(Icons.delete_outlined),
-                          onPressed: () {
-                            // Respond to button press
-                          }
+                          onPressed: () => _delete(snapshot.data![index])
                         ),
                         IconButton(
                           icon: const Icon(Icons.edit_outlined),
@@ -80,12 +97,6 @@ class _SeasonListState extends State<SeasonList> {
                             // Respond to button press
                           },
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.post_add_outlined),
-                          onPressed: () {
-                            // Respond to button press
-                          },
-                        )
                       ],
                     ),
                     EpisodeList(seasonId: snapshot.data![index].id)

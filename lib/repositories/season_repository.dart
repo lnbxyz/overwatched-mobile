@@ -67,7 +67,14 @@ class SeasonRepository {
     return null;
   }
 
-  Future<bool> delete(Season season) async {
-    return true;
+  Future<void> delete(Season season) async {
+    final String url = "$API_BASE_URL/seasons/${season.id}";
+
+    Response res = await client.delete(Uri.parse(url));
+
+    if (res.statusCode != 200) {
+      Map<String, String> map = Map.castFrom(json.decode(res.body));
+      throw HttpException(map['message']!);
+    }
   }
 }
