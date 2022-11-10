@@ -126,6 +126,12 @@ class _EditSeriePageState extends State<EditSeriePage> {
   @override
   void dispose() {
     _textEditingGenresController.dispose();
+    _coverUrlController.dispose();
+    _descriptionController.dispose();
+    _endingYearController.dispose();
+    _releaseYearController.dispose();
+    _nameController.dispose();
+    _scoreController.dispose();
     super.dispose();
   }
 

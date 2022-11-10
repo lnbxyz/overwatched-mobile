@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:overwatched/components/season_list.dart';
 import 'package:overwatched/components/series_info_ROW.dart';
 import 'package:overwatched/models/serie.dart';
+import 'package:overwatched/pages/edit_season.dart';
 import 'package:overwatched/repositories/serie_repository.dart';
 
-import '../models/serie.dart';
 import 'edit_serie.dart';
 
 class SeriesDetailPage extends StatefulWidget {
@@ -152,8 +152,8 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                     const SizedBox(height: 16),
                     Text(serie.description,
                         style: Theme.of(context).textTheme.bodyMedium),
-                    const SizedBox(height: 32),
-                    SeasonList(serieId: serie.id),
+                    const SizedBox(height: 16),
+                    SeasonList(serie: serie),
                     const SizedBox(height: 200),
                   ],
                 ),
