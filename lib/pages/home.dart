@@ -3,8 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:overwatched/models/serie.dart';
 import 'package:overwatched/pages/edit_serie.dart';
 import 'package:overwatched/pages/series_detail.dart';
-import 'package:overwatched/stores/serie_store.dart';
-import 'package:provider/provider.dart';
+import 'package:overwatched/repositories/serie_repository.dart';
 
 import '../components/series_info_ROW.dart';
 
@@ -17,53 +16,74 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  void _onClickAdd(BuildContext context) {
-    Navigator.of(context).push(
+  final serieRepository = SerieRepository();
+  List<Serie> series = [];
+  bool isLoading = true;
+
+  void _onClickAdd(BuildContext context) async {
+    final shouldRefresh = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const EditSeriePage(),
       ),
     );
+
+    if (shouldRefresh) {
+      refresh();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    refresh();
+  }
+
+  void refresh() {
+    setState(() {
+      isLoading = true;
+    });
+
+    serieRepository.list().then((value) {
+      setState(() {
+        series = value;
+        isLoading = false;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final serieStore = Provider.of<SerieStore>(context);
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Overwatched'),
+      appBar: AppBar(
+        title: const Text('Overwatched'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _onClickAdd(context),
+        child: const Icon(Icons.add),
+      ),
+      body: isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+          itemCount: series.length,
+          itemBuilder: (context, index) {
+            final serie = series[index];
+            return GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => SeriesDetailPage(serie: serie),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: SerieCard(serie)
+              ),
+            );
+          }
         ),
-        body: Observer(
-          builder: (_) {
-            if (serieStore.isLoading) {
-              return const Text('Loading');
-            } else {
-              return ListView.builder(
-                  padding:
-                  const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                  itemCount: serieStore.series.length,
-                  itemBuilder: (context, index) {
-                    final serie = serieStore.series[index];
-                    return GestureDetector(
-                      child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: SerieCard(serie)),
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                SeriesDetailPage(serie: serie),
-                          ),
-                        );
-                      },
-                    );
-                  });
-            }
-          },
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => _onClickAdd(context),
-          child: const Icon(Icons.add),
-        ));
+    );
   }
 }
 
@@ -91,15 +111,15 @@ class SerieCard extends StatelessWidget {
                     child: AspectRatio(
                       aspectRatio: 9 / 16,
                       child: ClipRRect(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(4.0)),
-                          child: serie.coverUrl.isNotEmpty
-                              ? Image.network(
-                                  serie.coverUrl,
-                                  height: 120,
-                                  fit: BoxFit.cover,
-                                )
-                              : null),
+                        borderRadius: const BorderRadius.all(Radius.circular(4.0)),
+                        child: serie.coverUrl.isNotEmpty
+                          ? Image.network(
+                            serie.coverUrl,
+                            height: 120,
+                            fit: BoxFit.cover,
+                          )
+                          : null
+                      ),
                     ),
                   ),
                 ),
@@ -122,11 +142,13 @@ class SerieCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         SeriesInfoRow(
-                            icon: Icons.theater_comedy_outlined,
-                            text: serie.genres.join(', ')),
+                          icon: Icons.theater_comedy_outlined,
+                          text: serie.genres.join(', ')
+                        ),
                         SeriesInfoRow(
-                            icon: Icons.grade_outlined,
-                            text: '${serie.score?.toStringAsFixed(1)}/10.0'),
+                          icon: Icons.grade_outlined,
+                          text: '${serie.score?.toStringAsFixed(1)}/10.0'
+                        ),
                       ],
                     ),
                   ),

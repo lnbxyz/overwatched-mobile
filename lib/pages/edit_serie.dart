@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:overwatched/models/serie.dart';
+import 'package:overwatched/repositories/serie_repository.dart';
 
 import '../components/simple_alert.dart';
-import '../stores/serie_store.dart';
 
 class EditSeriePage extends StatefulWidget {
   const EditSeriePage({Key? key, this.serie}) : super(key: key);
@@ -17,7 +17,7 @@ class EditSeriePage extends StatefulWidget {
 }
 
 class _EditSeriePageState extends State<EditSeriePage> {
-  SerieStore serieStore = SerieStore();
+  final serieRepository = SerieRepository();
 
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -35,9 +35,8 @@ class _EditSeriePageState extends State<EditSeriePage> {
   }
 
   void _onClickSave(BuildContext context) async {
-
     try {
-      await serieStore.create(Serie(
+      await serieRepository.create(Serie(
         name: _nameController.text,
         description: _descriptionController.text,
         coverUrl: _coverUrlController.text,
@@ -51,9 +50,8 @@ class _EditSeriePageState extends State<EditSeriePage> {
         context: context,
         builder: (BuildContext context) =>
         const SimpleAlert(title: 'Série salva com sucesso'),
-      ).whenComplete(() => Navigator.of(context).pop());
+      ).whenComplete(() => Navigator.of(context).pop(true));
     } catch (err) {
-      print(err);
       String message = 'Um erro ocorreu ao salvar a série';
       if (err is HttpException) {
         message += ' (${err.message})';
