@@ -1,25 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:overwatched/components/edit_episode.dart';
 import 'package:overwatched/models/episode.dart';
-import 'package:overwatched/models/season.dart';
-
-Future<List<Episode>> fetchEpisodes() async {
-  // TODO https://codewithflutter.com/flutter-fetch-data-from-api-rest-api-example/
-  return Future.delayed(const Duration(seconds: 1), () => [
-    Episode(
-      name: 'Episode 1',
-      id: '2000',
-      number: 1,
-      duration: 23
-    ),
-    Episode(
-      name: 'Episode 2',
-      id: '2001',
-      number: 2,
-      duration: 27,
-      watched: true
-    )
-  ]);
-}
+import 'package:overwatched/repositories/episode_repository.dart';
+import 'dart:io';
 
 class EpisodeList extends StatefulWidget {
   const EpisodeList({Key? key, required this.seasonId}) : super(key: key);
@@ -35,12 +18,71 @@ enum Action { edit, delete }
 
 class _EpisodeListState extends State<EpisodeList> {
 
+  final episodeRepository = EpisodeRepository();
   late Future<List<Episode>> episodes;
 
   @override
   void initState() {
     super.initState();
-    episodes = fetchEpisodes();
+    refresh();
+  }
+
+  void refresh() {
+    setState(() {
+      episodes = episodeRepository.list(widget.seasonId);
+    });
+  }
+
+  void _onToggleWatched(BuildContext context, Episode episode) async {
+    try {
+      await episodeRepository.toggleWatched(episode, episode.watched);
+      refresh();
+      showSnackbar(context, 'Episódio atualizado com sucesso.');
+    } catch (err) {
+      String message = 'Um erro ocorreu ao atualizar o episódio.';
+      if (err is HttpException) {
+        message += ' (${err.message})';
+      }
+      message += '. Tente novamente.';
+      showSnackbar(context, message);
+    }
+  }
+
+  void _onAddEpisode(BuildContext context) async {
+    showDialog(context: context, builder: (BuildContext context) =>
+        EditEpisodeDialog(seasonId: widget.seasonId)).whenComplete(() => refresh());
+  }
+
+  void _onEditEpisode(BuildContext context, Episode episode) async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) =>
+          EditEpisodeDialog(
+            episode: episode,
+            seasonId: widget.seasonId
+          )
+    ).whenComplete(() => refresh());
+  }
+
+  void _onDeleteEpisode(BuildContext context, Episode episode) async {
+    try {
+      await episodeRepository.delete(episode);
+      refresh();
+      showSnackbar(context, 'Episódio apagado com sucesso.');
+    } catch (err) {
+      String message = 'Um erro ocorreu ao apagar o episódio.';
+      if (err is HttpException) {
+        message += ' (${err.message})';
+      }
+      message += '. Tente novamente.';
+      showSnackbar(context, message);
+    }
+  }
+
+  void showSnackbar(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(text))
+    );
   }
 
   @override
@@ -49,66 +91,82 @@ class _EpisodeListState extends State<EpisodeList> {
       future: episodes,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return ListView.builder(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemCount: snapshot.data!.length,
-            itemBuilder: (_, index) => Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  snapshot.data![index].number.toString(),
-                  style: Theme.of(context).textTheme.bodyLarge
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 8, right: 8),
-                  child: ColoredBox(
-                      color: Colors.grey,
-                      child: SizedBox(
-                        width: 2,
-                        height: 20,
-                      )
-                  ),
-                ),
-                Text(
-                  snapshot.data![index].name,
-                  style: Theme.of(context).textTheme.bodyMedium
-                ),
-                if (snapshot.data![index].duration > 0)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Text(
-                        '${snapshot.data![index].duration.toString()}min',
-                        style: const TextStyle(
-                          color: Colors.grey
-                        )
-                    ),
-                  ),
-                Flexible(child: Container()),
-                IconButton(
-                  icon: const Icon(Icons.visibility_outlined),
-                  onPressed: () {
-                    // Respond to button press
-                  },
-                  color: snapshot.data![index].watched ? Colors.orange : Colors.grey,
-                ),
-                PopupMenuButton<Action>(
-                  // Callback that sets the selected popup menu item.
-                    onSelected: (Action action) {
-                      // TODO
-                    },
-                    itemBuilder: (BuildContext context) => <PopupMenuEntry<Action>>[
-                      const PopupMenuItem<Action>(
-                        value: Action.edit,
-                        child: Text('Edit'),
+          return Column(
+            children: [
+              ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  final episode = snapshot.data![index];
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        episode.number.toString(),
+                        style: Theme.of(context).textTheme.bodyLarge
                       ),
-                      const PopupMenuItem<Action>(
-                        value: Action.delete,
-                        child: Text('Delete'),
-                      )
-                    ]),
-              ],
-            ),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 8, right: 8),
+                        child: ColoredBox(
+                            color: Colors.grey,
+                            child: SizedBox(
+                              width: 2,
+                              height: 20,
+                            )
+                        ),
+                      ),
+                      Text(
+                        episode.name,
+                        style: Theme.of(context).textTheme.bodyMedium
+                      ),
+                      if (episode.duration > 0)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(
+                              '${episode.duration.toString()}min',
+                              style: const TextStyle(
+                                color: Colors.grey
+                              )
+                          ),
+                        ),
+                      Flexible(child: Container()),
+                      IconButton(
+                        icon: const Icon(Icons.visibility_outlined),
+                        onPressed: () => _onToggleWatched(context, episode),
+                        color: episode.watched ? Colors.orange : Colors.grey,
+                      ),
+                      PopupMenuButton<Action>(
+                        // Callback that sets the selected popup menu item.
+                        onSelected: (Action action) {
+                          if (action == Action.edit) _onEditEpisode(context, episode);
+                          if (action == Action.delete) _onDeleteEpisode(context, episode);
+                        },
+                        itemBuilder: (BuildContext context) => <PopupMenuEntry<Action>>[
+                          const PopupMenuItem<Action>(
+                            value: Action.edit,
+                            child: Text('Edit'),
+                          ),
+                          const PopupMenuItem<Action>(
+                            value: Action.delete,
+                            child: Text('Delete'),
+                          )
+                        ]
+                      ),
+                    ],
+                  );
+                }
+              ),
+              TextButton(
+                child: const Text(
+                  'Adicionar Episódio',
+                  style: TextStyle(
+                    color: Colors.grey
+                  ),
+                ),
+                onPressed: () => _onAddEpisode(context),
+              )
+            ]
           );
         } else {
           return const Center(child: CircularProgressIndicator());
@@ -117,3 +175,5 @@ class _EpisodeListState extends State<EpisodeList> {
     );
   }
 }
+
+
